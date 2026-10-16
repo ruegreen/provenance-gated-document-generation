@@ -1,0 +1,35 @@
+graph TB
+    subgraph Client["Single-Page Client"]
+        LEDGER["Ledger Editor<br/>(value + provenance + owner)"]
+        ADVISOR["Collection Advisor<br/>(ranked by blast radius)"]
+        REVIEW["Readiness Review"]
+    end
+
+    subgraph API["Application Layer"]
+        SPINE["Spine<br/>(provenance rank, readiness,<br/>session record)"]
+        PACK["Domain Pack<br/>(field registry, units,<br/>benefit model)"]
+        PLAN["Render Plan<br/>(owns all slide numbering)"]
+        GATE["Finalisation Gate<br/>(24 named fields)"]
+        EXPORT["Export Service<br/>(immutable, hashed, versioned)"]
+    end
+
+    subgraph Render["Render Service"]
+        CONTRACT["Slot Contract<br/>(141 addressed shapes)"]
+        OPS["Operation Applier"]
+        VALIDATE["Post-Render Validator"]
+    end
+
+    subgraph Store["Persistence"]
+        ACCT[("Account Ledger")]
+        VERS[("Export Versions")]
+        TPL[("Hash-Addressed Templates")]
+    end
+
+    LEDGER & ADVISOR & REVIEW --> SPINE
+    SPINE --> PACK
+    SPINE --> PLAN --> GATE
+    GATE -->|"refused: returns collection plan"| ADVISOR
+    GATE -->|"passed"| EXPORT --> OPS
+    CONTRACT --> OPS --> VALIDATE --> VERS
+    SPINE <--> ACCT
+    CONTRACT <--> TPL
